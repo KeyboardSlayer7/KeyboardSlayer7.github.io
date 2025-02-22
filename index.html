@@ -9,54 +9,82 @@
 </head>
 <body> 
     <div class="container"> 
-        <div class="section hello_world hidden">
-            <h1>Hello World!</h1>
-            <div class="scroll_hint">
+        <section>
+            <div class="title hidden">
+                <h1>Hello World!</h1>
+            </div>
+            <div class="scroll_hint hide">
                 <span class="arrow">&#x2193;</span>
             </div>
-        </div>
-        <div class="section intro hidden">
-            <h1>Who Am I?</h1>
-            <p>
-                Hi, I am Dhruv Sharma, a 3rd year university student studying Computer Science at the Royal Melbourne Institute of Technology (RMIT) in Melbourne, Australia.
-                I love everything about technology, however my main interests are in software development and cybersecurity. 
-            </p>
-            <ul>
-                <li>
-                    <a href="https://github.com/KeyboardSlayer7">
-                        <img src="assets/images/github-mark-white.png" alt="Image not found">
-                    </a>
-                </li>
-                <li>
-                    <a href="www.linkedin.com/in/dhruv-sharma-bb7328217">
-                        <img src="assets/images/In-White-128.png" alt="">
-                    </a>
-                </li>
-            </ul>
-        </div>
-        <div class="section projects hidden">
-            <h1>Projects</h1>
-
-            <h3><a href="">CMake Project Generator</a></h3>
-            <p>
-                A simple C++ terminal program that generates a CMake project structure for C++ projects. 
-                The script creates a CMakeLists.txt file, a src directory for source files.
-            </p>
-
-            <h3><a href="">Password Manager</a></h3>
-            <p>
-                A simple password manager that stores passwords in an encrypted file. The program uses the AES encryption algorithm to encrypt and decrypt the passwords.
-            </p>
-
-            <h3><a href="">PNG Steganography</a></h3>
-            <p>
-                A simple program that hides text in a PNG image. The program uses the LSB steganography technique to hide the text in the image.
-            </p>
-        </div>
-        <div class="section contact hidden">
-            <h1>Contact</h1>
-            <p>Email: dhruvsha0507@gmail.com</p>
-        </div>
+        </section>
+        <section>
+            <div class="intro hidden">
+                <h1>Who Am I?</h1>
+                <p>
+                    Hi, I am Dhruv Sharma, a 3rd year university student studying Computer Science at the Royal Melbourne Institute of Technology (RMIT) in Melbourne, Australia.
+                    I love everything about technology, however my main interests are in software development and cybersecurity. 
+                </p>
+                <ul>
+                    <li>
+                        <a href="https://github.com/KeyboardSlayer7">
+                            <img src="assets/images/github-mark-white.png" alt="Image not found">
+                        </a>
+                    </li>
+                    <li>
+                        <a href="www.linkedin.com/in/dhruv-sharma-bb7328217">
+                            <img src="assets/images/In-White-128.png" alt="">
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </section>
+        <section>
+            <div class="title hidden">
+                <h1>Projects</h1>
+            </div>
+        </section>                
+                <section class="side-by-side">
+                    <div class="hidden">
+                        <h3><a href="">CMake Project Generator</a></h3>
+                        <p>
+                            A simple C++ terminal program that generates a CMake project structure for C++ projects. 
+                            The script creates a CMakeLists.txt file, a src directory for source files.
+                        </p>
+                    </div>
+                    <div class="distorted-right">
+                        <img src="assets/images/cmake_project_generator.png" alt="Image not found">
+                    </div>
+                </section>
+                
+                <section class="side-by-side">
+                    <div>
+                        <img src="assets/images/password_manager.png" alt="Image not found">
+                    </div>
+                    <div class="hidden">
+                        <h3><a href="">Password Manager</a></h3>
+                        <p>
+                            A simple password manager that stores passwords in an encrypted file. The program uses the AES encryption algorithm to encrypt and decrypt the passwords.
+                        </p>
+                    </div>
+                </section>
+                
+                <section class="side-by-side">
+                    <div class="hidden"> 
+                        <h3><a href="">PNG Steganography</a></h3>
+                        <p>
+                            A simple program that hides text in a PNG image. The program uses the LSB steganography technique to hide the text in the image.
+                        </p>
+                    </div>
+                    <div>
+                        <img src="assets/images/png_steganography.png" alt="Image not found">
+                    </div>
+                </section>  
+        <section>
+            <div class="section contact hidden">
+                <h1>Contact</h1>
+                <p>Email: dhruvsha0507@gmail.com</p>
+            </div>
+        </section>
     </div> 
 </body>
 </html>
