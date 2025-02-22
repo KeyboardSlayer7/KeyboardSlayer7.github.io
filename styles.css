@@ -13,18 +13,42 @@ body {
 }
 
 .container { 
+    align-items: center;
     margin: 0;
     display: flex;
     flex-direction: column;
-    width: 50%;
+    /* width: 50%; */
     gap: 20px;
 }
 
-.section {
+section {
+    position: relative;
     place-content: center;
     min-height: 100vh;
     scroll-snap-type: y mandatory;
+    width: 50%;
     /* background: linear-gradient(180deg, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 55%, rgba(255,255,255,1) 100%); */
+}
+
+.side-by-side {
+    width: 90%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    align-content: space-evenly;
+    /* gap: 0; */
+}
+
+.side-by-side div{
+    width: 45%;
+    margin: 0;
+    padding: 0;
+}
+
+.side-by-side img {
+    width: 100%;
+    height: auto;
 }
 
 .hidden {
@@ -41,28 +65,48 @@ body {
     transition: all 2s;
 }
 
-.scroll_hint {
-    position: fixed;
+.distorted-right {
+    transform: translateX(-50px) perspective(1200px) rotateY(-25deg);
+    filter: blur(0.5px);
+}
+
+.distorted-left {
+    transform: translateX(50px) perspective(1200px) rotateY(30deg);
+    filter: blur(0px);
+}
+
+.scroll_hint {  
+    position: absolute;
     bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
     color: white;
     font-size: 50px;
-    opacity: 0.75; 
+    /* opacity: 0.75;  */
+    animation: bounce_animation 5s infinite;
+}
+
+.hide {
+    opacity: 0;
+}
+
+.show {
+    opacity: 0.75;
+    transition: opacity 2s;
 }
 
 @keyframes bounce_animation {
-    from {
+    0%, 30%, 60%, 100% {
         transform: translateY(0);
     }
-    to {
+    15%, 45% {
         transform: translateY(-20px);
-    }
+    } 
 }
 
 .arrow {
     color: white;
-    animation: bounce_animation 2s infinite;
+    /* animation: bounce_animation 2s infinite; */
 }
 
 ul {
@@ -87,7 +131,7 @@ a {
     text-decoration: none;
 }
 
-.hello_world {
+.title {
     font-size: xx-large;
     text-align: center;
     justify-items: center;
