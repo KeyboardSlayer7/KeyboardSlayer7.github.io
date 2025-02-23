@@ -7,8 +7,7 @@ body {
     font-family: "Kanit", sans-serif;
     font-weight: 200;
     font-size: large;
-    background-color: black;
-    /* background: radial-gradient(circle, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 55%, rgba(255,255,255,1) 100%); */
+    background-color: #101010;
     color: white;
 }
 
@@ -27,7 +26,6 @@ section {
     min-height: 100vh;
     scroll-snap-type: y mandatory;
     width: 50%;
-    /* background: linear-gradient(180deg, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 55%, rgba(255,255,255,1) 100%); */
 }
 
 .side-by-side {
@@ -51,7 +49,7 @@ section {
     height: auto;
 }
 
-.hidden {
+/* .hidden {
     opacity: 0;
     transform: translateX(-50%);
     filter: blur(5px);
@@ -63,15 +61,35 @@ section {
     filter: blur(0px);
     transform: translateX(0%);
     transition: all 2s;
+} */
+
+.animated {
+    opacity: 0;
+    transform: scale(0.5) /* rotateX(-100deg) */;
+    filter: blur(2.5px);
 }
+
+.animated.in-view {
+    opacity: 1;
+    transform: scale(1) /* rotateX(0deg) */;
+    filter: blur(0px);
+    transition: all 1s;
+}
+
+.animated.out-view {
+    opacity: 0;
+    transform: scale(0.5) /* rotateX(100deg) */;
+    filter: blur(2.5px);
+    transition: all 1s;
+} 
 
 .distorted-right {
-    transform: translateX(-50px) perspective(1200px) rotateY(-25deg);
+    transform: translateX(-50px) perspective(1200px) rotateY(-20deg);
     filter: blur(0.5px);
-}
+} 
 
 .distorted-left {
-    transform: translateX(50px) perspective(1200px) rotateY(30deg);
+    transform: translateX(50px) perspective(1200px) rotateY(20deg);
     filter: blur(0px);
 }
 
