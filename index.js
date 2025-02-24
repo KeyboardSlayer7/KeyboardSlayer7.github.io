@@ -18,7 +18,7 @@ const observer = new IntersectionObserver((entries) => {
             }
         }
     }); 
-}, {threshold: 0.75});
+}, {threshold: 0.5});
 
 const hidden = document.querySelectorAll('.animated');
 hidden.forEach((element) => {
