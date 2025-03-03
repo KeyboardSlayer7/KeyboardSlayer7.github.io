@@ -90,7 +90,7 @@ section {
 
 .distorted-left {
     transform: translateX(50px) perspective(1200px) rotateY(20deg);
-    filter: blur(0px);
+    filter: blur(0.5px);
 }
 
 .scroll_hint {  
