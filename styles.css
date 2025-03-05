@@ -176,3 +176,32 @@ a {
         transform: translateX(0px) perspective(0px) rotateY(0deg);
     }
 }
+
+#scroll-indicator {
+    position: fixed;
+    display: flex;
+    justify-content:space-between;
+    align-items: center;
+    overflow: hidden;
+    white-space: nowrap;
+    width: 90%;
+    z-index: 1000;
+}
+
+#scroll-indicator span{
+    flex: 1;
+    text-align: center;
+}
+
+#previous {
+    opacity: 0.75;
+}
+
+#current {
+    opacity: 1;
+    scale: 1.2;
+}
+
+#next {
+    opacity: 0.75;
+}
