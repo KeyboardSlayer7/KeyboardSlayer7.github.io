@@ -9,7 +9,14 @@
 </head>
 <body> 
     <div class="container"> 
-        <section class = "animated">
+        <span id="scroll-indicator">
+            <span id="previous"></span>
+            <span>&#x2190;</span>
+            <span id="current"></span>
+            <span>&#x2192;</span>
+            <span id="next"></span>
+        </span>
+        <section id = "Hello World!" class = "animated">
             <div class="title hidden">
                 <h1>Hello World!</h1>
             </div>
@@ -17,7 +24,7 @@
                 <span class="arrow">&#x2193;</span>
             </div>
         </section>
-        <section class = "animated">
+        <section id = "Intro" class = "animated">
             <div class="intro hidden">
                 <h1>Who Am I?</h1>
                 <p>
@@ -31,19 +38,22 @@
                         </a>
                     </li>
                     <li>
-                        <a href="www.linkedin.com/in/dhruv-sharma-bb7328217">
-                            <img src="assets/images/In-White-128.png" alt="">
+                        <a href="https://www.linkedin.com/in/dhruv-sharma-bb7328217">
+                            <img src="assets/images/In-White-128.png" alt="Image not found">
                         </a>
                     </li>
                 </ul>
             </div>
         </section>
-        <section class="animated">
+        <section id = "Projects" class="animated">
             <div class="title hidden">
                 <h1>Projects</h1>
             </div>
+            <div class="scroll_hint hide">
+                <span class="arrow">&#x2193;</span>
+            </div>
         </section class="animated">                
-                <section class="side-by-side animated">
+                <section id = "CMake Project Generator" class="side-by-side animated">
                     <div class="hidden">
                         <h3><a href="">CMake Project Generator</a></h3>
                         <p>
@@ -56,7 +66,7 @@
                     </div>
                 </section>
                 
-                <section class="side-by-side animated">
+                <section id = "Password Manager" class="side-by-side animated">
                     <div class = "distorted-left">
                         <img src="assets/images/password_manager.png" alt="Image not found">
                     </div>
@@ -69,7 +79,7 @@
                     </div>
                 </section>
                 
-                <section class="side-by-side animated">
+                <section id = "PNG Steganography" class="side-by-side animated">
                     <div class="hidden"> 
                         <h3><a href="">PNG Steganography</a></h3>
                         <p>
@@ -80,7 +90,7 @@
                         <img src="assets/images/png_steganography.png" alt="Image not found">
                     </div>
                 </section>  
-        <section class="animated">
+        <section id = "Contact" class="animated">
             <div class="section contact hidden">
                 <h1>Contact</h1>
                 <p>Email: keyboardslayer7@protonmail.com</p>
