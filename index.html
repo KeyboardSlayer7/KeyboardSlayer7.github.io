@@ -9,93 +9,79 @@
 </head>
 <body> 
     <div class="container"> 
-        <span id="scroll-indicator">
-            <span id="previous"></span>
-            <span>&#x2190;</span>
-            <span id="current"></span>
-            <span>&#x2192;</span>
-            <span id="next"></span>
-        </span>
-        <section id = "Hello World!" class = "animated">
-            <div class="title hidden">
-                <h1>Hello World!</h1>
-            </div>
-            <div class="scroll_hint hide">
-                <span class="arrow">&#x2193;</span>
-            </div>
-        </section>
-        <section id = "Intro" class = "animated">
-            <div class="intro hidden">
-                <h1>Who Am I?</h1>
-                <p>
-                    Hi, I am Dhruv Sharma, a 3rd year university student studying Computer Science at the Royal Melbourne Institute of Technology (RMIT) in Melbourne, Australia.
-                    I love everything to do with technology, however my main interests are in software development and cybersecurity. 
-                </p>
-                <ul>
-                    <li>
-                        <a href="https://github.com/KeyboardSlayer7">
-                            <img src="assets/images/github-mark-white.png" alt="Image not found">
-                        </a>
-                    </li>
-                    <li>
-                        <a href="https://www.linkedin.com/in/dhruv-sharma-bb7328217">
-                            <img src="assets/images/In-White-128.png" alt="Image not found">
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </section>
-        <section id = "Projects" class="animated">
-            <div class="title hidden">
-                <h1>Projects</h1>
-            </div>
-            <div class="scroll_hint hide">
-                <span class="arrow">&#x2193;</span>
-            </div>
-        </section class="animated">                
-                <section id = "CMake Project Generator" class="side-by-side animated">
-                    <div class="hidden">
-                        <h3><a href="">CMake Project Generator</a></h3>
-                        <p>
-                            A simple C++ terminal program that generates a CMake project structure for C++ projects. 
-                            The script creates a CMakeLists.txt file and a src directory for source files.
-                        </p>
-                    </div>
-                    <div class="distorted-right">
-                        <img src="assets/images/cmake_project_generator3.png" alt="Image not found">
-                    </div>
-                </section>
-                
-                <section id = "Password Manager" class="side-by-side animated">
-                    <div class = "distorted-left">
-                        <img src="assets/images/password_manager.png" alt="Image not found">
-                    </div>
-                    <div class="hidden">
-                        <h3><a href="">Password Manager</a></h3>
-                        <p>
-                            A simple master-password based password manager that stores encrypted passwords in a json file. The program uses the AES encryption algorithm to encrypt and decrypt the passwords.
-                            The program is written in C++ and uses the OpenSSL library for encryption.
-                        </p>
-                    </div>
-                </section>
-                
-                <section id = "PNG Steganography" class="side-by-side animated">
-                    <div class="hidden"> 
-                        <h3><a href="">PNG Steganography</a></h3>
-                        <p>
-                            A simple program written in C that hides text in a PNG image. The program uses the Least Significant Bit (LSB) steganography technique to hide the text in the image.
-                        </p>
-                    </div>
-                    <div class = "distorted-right">
-                        <img src="assets/images/png_steganography.png" alt="Image not found">
-                    </div>
-                </section>  
-        <section id = "Contact" class="animated">
-            <div class="section contact hidden">
-                <h1>Contact</h1>
-                <p>Email: keyboardslayer7@protonmail.com</p>
-            </div>
-        </section>
+        <div class="title">
+            <h1>Hello World!</h1>
+        </div>
+        <div>
+            <h1>Who Am I?</h1>
+            <p>
+                Hi, I am Dhruv Sharma, a 3rd year university student studying Computer Science at the Royal Melbourne Institute of Technology (RMIT) in Melbourne, Australia.
+                I love everything to do with technology, however my main interests are in software development and cybersecurity. 
+            </p>
+            <ul>
+                <li>
+                    <a href="https://github.com/KeyboardSlayer7">
+                        <img src="assets/images/github-mark-white.png" alt="Image not found">
+                    </a>
+                </li>
+                <li>
+                    <a href="https://www.linkedin.com/in/dhruv-sharma-bb7328217">
+                        <img src="assets/images/In-White-128.png" alt="Image not found">
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="title">
+            <h2>Projects</h2>
+        </div>
+        <div>
+            <h3><a href="https://github.com/KeyboardSlayer7/setup">CMake Project Generator</a></h3>
+            <p>
+                A simple C++ terminal program that generates a CMake project structure for C++ projects. 
+                The script creates a CMakeLists.txt file and a src directory for source files.
+            </p>
+        </div>
+        <div>
+            <figure>
+                <img src="assets/images/cmake_project_generator3.png" alt="Image not found">
+                <figcaption>[Figure 1: Example terminal output of CMake Project Generator]</figcaption>
+            </figure>
+        </div>
+        <div>
+            <h3><a href="https://github.com/KeyboardSlayer7/password_manager">Password Manager</a></h3>
+            <p>
+                A simple master-password based password manager that stores encrypted passwords in a json file. The program uses the AES encryption algorithm to encrypt and decrypt the passwords.
+                The program is written in C++ and uses the OpenSSL library for encryption.
+            </p>
+        </div>
+        <div class = "distorted-left">
+            <figure>
+                <img src="assets/images/password_manager.png" alt="Image not found">
+                <figcaption>[Figure 2: Terminal User Interface (TUI) of Password Manager]</figcaption>
+            </figure>
+        </div>    
+        <div> 
+            <h3><a href="https://github.com/KeyboardSlayer7/steganography">PNG Steganography</a></h3>
+            <p>
+                A simple program written in C that hides text in a PNG image. The program uses the Least Significant Bit (LSB) steganography technique to hide the text in the image.
+            </p>
+        </div>
+        <div>
+            <figure>
+                <img src="assets/images/png_steganography.png" alt="Image not found">
+                <figcaption>[Figure 3: Example of hiding string in PNG image]</figcaption>
+            </figure>
+        </div>
+        <div>
+            <figure>
+                <img src="assets/images/png_steganography_2.png" alt="Image not found">
+                <figcaption>[Figure 4: Example of extracting hidden string from PNG image]</figcaption>
+            </figure>
+        </div>
+        <div>
+            <h2>Contact</h2>
+            <p>Email: keyboardslayer7@protonmail.com</p>
+        </div>
     </div> 
 </body>
 </html>
