@@ -22,6 +22,7 @@ img {
 }
 
 ul {
+    display: flex;
     list-style: none;
     padding-left: 0;
 }
@@ -34,16 +35,23 @@ li {
 }
 
 li img {
-    width: 50px; 
+    width: 2.5em; 
     height: auto;
 }
 
 a {
     color: white;
-    text-decoration: none;
+    text-decoration: underline;
 }
 
 .title {
     font-size: xx-large;
     justify-items: center;
+}
+
+code {
+    color: black;
+    background-color: white;
+    padding: 5px;
+    border-radius: 5px;
 }
