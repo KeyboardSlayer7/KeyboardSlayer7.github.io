@@ -36,7 +36,7 @@
         <div>
             <h3><a href="https://github.com/KeyboardSlayer7/password_manager" target = "_blank">Password Manager</a></h3>
             <p>
-                A simple master-password based password manager that stores encrypted passwords in a json file. The program uses the AES encryption algorithm to encrypt and decrypt the passwords.
+                A simple master-password based password manager that stores encrypted passwords in a JSON file. The program uses the AES encryption algorithm to encrypt and decrypt the passwords.
                 The program is written in C++ and uses the OpenSSL library for encryption and nlohmann/json for handling JSON files.
             </p>
         </div>
@@ -67,13 +67,14 @@
         <div>
             <h3><a href="https://github.com/KeyboardSlayer7/http_server" target = "_blank">HTTP/1.1 Server</a></h3>
             <p>
-                A simple HTTP/1.1 server written in C++ that serves static files. The server supports GET requests and can serve HTML and png image file types as of now. 
+                A simple HTTP/1.1 server written in C++ that serves static files. The server supports GET requests and can serve HTML and PNG image file types in its current state. 
             </p>
         </div> 
         <div>
             <h3><a href="https://github.com/KeyboardSlayer7/block" target = "_blank">DNS Proxy</a></h3>
             <p>
-                A simple DNS proxy server written in C++ that forwards DNS queries to a specified DNS server. This project is still in very early stages of development.
+                A simple DNS proxy server written in C++ that forwards DNS queries to a specified DNS server. The proxy parses requests from clients and checks the domain names 
+                against a blacklist. If a domain name is in the blacklist the query is modified and then sent to the selected DNS server.
             </p>
         </div>
         <div>
