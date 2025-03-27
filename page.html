@@ -19,9 +19,274 @@
             <span>&#x2190;</span>
             <a href="blog.html">Back to Blogs</a>
         </div>
-        <div>
+        <!-- <div>
             <p>
                 Work in progress! Content coming soon.
+            </p>
+        </div> -->
+        <div>
+            <p>
+                While doom scrolling YouTube shorts, in bed at 12 am, I came across a video in which a YouTuber was discussing their method of password storage. They
+                pull up a PNG image and say that their passwords are stored in the image, which left me extremely confused &#x1F615;, so I did some research. This is where I first 
+                learnt of the concept of steganography. It looked pretty interesting, so I just had to try it out. As someone who enjoys making things harder than they 
+                need to be, I naturally chose to develop in C and try to do almost everything myself, how hard could it be &#x1F937;&#x200D;&#x2642;? This blog post explains 
+                how I went about developing my PNG Steganography program.
+            </p>
+        </div>
+        <div>
+            <h2>Steganography</h2>
+            <p>
+                Steganography is the practice of hiding information within other data. In this case strings and files in PNG images. There are multiple ways in which 
+                this can be achieved, however for this program I chose to go with a technique known as Least Significant Bit (LSB) steganography, due to it being one of
+                the simplest methods to implement and allows for a larger amounts of data to be stored compared to other techniques, not that it really matters for this 
+                use case. However LSB steganography does have its downsides. It is more easily detected by statistical analysis and data can be lost in certain situations. 
+                But really, who apart from some absolute nerds &#x261D;&#xFE0F;&#x1F913;, are going to expect data to be hidden within an image and possible data loss is 
+                not a concern unless I am actually going to be using this program seriously.
+            </p>
+        </div>
+        <div>
+            <h2>Portable Network Graphics</h2>
+            <p>
+                At first, I thought parsing PNGs would be difficult, however thankfully the format is pretty straightforward and easy to understand &#x1F64F;. 
+                A PNG is made up of an 8 byte header, which we do not really care about, and multiple Chunks. Chunks are where information about the 
+                image is stored and are structured as such. 
+            </p>
+            <table>
+                <tr>
+                    <th>Length</th>
+                    <th>Type</th>
+                    <th>Data</th>
+                    <th>CRC</th>
+                </tr>
+                <tr>
+                    <td>4 bytes</td>
+                    <td>4 bytes</td>
+                    <td>Length bytes</td>
+                    <td>4 bytes</td>
+                </tr>
+            </table>
+                <!-- length -> 4 bytes, the length of the chunk data. <br> <br>
+                chunk type -> 4 bytes, <br> <br>
+                chunk data -> length bytes, <br> <br>
+                CRC -> 4 bytes, a checksum calculated over the chunk type and chunk data. <br> <br> -->
+            <p>
+                There are a few critical chunks which applications must be able to understand to properly read and render a PNG. These chunks are the IHDR, PLTE, IDAT, 
+                and IEND chunks. The IHDR chunk is always the first chunk and stores important information about the PNG such as dimensions, bit depth, colour type 
+                and others. The PLTE chunk contains a list of colours in RGB used in certain pixel formats (e.g. Indexed). The IDAT chunk contains the actual pixel 
+                data for the image. And finally, the IEND chunk is used to mark the end of the image. For this use case the most important chunks are the IHDR and 
+                IDAT chunks. The IHDR chunk is of use to us as it allows us to calculate how big the buffer should be for the decompressed data we obtain from the 
+                IDAT chunk so that we can get it done in one big go, as the size can be calculated using the height and width of the image as well as the number of 
+                bytes per pixel (how many bytes are used to represent each pixel). The IDAT chunk is where we perform the steganography, as it has the raw pixel data 
+                for the image. All other chunks are going to be transferred as is to the output PNG file.
+            </p>
+        </div>
+        <div>
+            <h2>Bits and Binary</h2>
+            <p>
+                Before explaining how the LSB technique works we must first understand some fundamental concepts. A PNG image consists of pixels and these pixels 
+                are usually represented by 1 or more bytes, depending on the pixel format chosen. A byte consists of 8 bits, where each bit can either be a 1 or 0. 
+                Some bits have bigger impacts on the byte's value, hence we get least/most significant bits. As we would like to have as little impact on the 
+                visual of the image as possible, we are going to be working with the least significant bits. Let us take an RGB png image, with a bit depth of 8. 
+                A bit depth of 8 means that each channel R, G and B is represented by 1 byte, which gives us 3 bytes per pixel. Say our R channel has the value 3
+                which is represented in binary below (the top row). If we flipped the leftmost bit that would change the value by 128 which is a very big difference. 
+                Such a change would be easy to spot just by looking at the image. However if we flipped the rightmost bit, we would only be changing the value by 1, 
+                which would not be as noticeable. This is why we work with the least significant bits.
+            </p> 
+            <table>
+                <tr>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>1</td>
+                    <td>1</td>
+                </tr>
+                <tr>
+                    <td>128</td>
+                    <td>64</td>
+                    <td>32</td>
+                    <td>16</td>
+                    <td>8</td>
+                    <td>4</td>
+                    <td>2</td>
+                    <td>1</td>
+                </tr>
+                <tr>
+                    <td>2<sup>7</sup></td>
+                    <td>2<sup>6</sup></td>
+                    <td>2<sup>5</sup></td>
+                    <td>2<sup>4</sup></td>
+                    <td>2<sup>3</sup></td>
+                    <td>2<sup>2</sup></td>
+                    <td>2<sup>1</sup></td>
+                    <td>2<sup>0</sup></td>
+                </tr> 
+            </table>
+        </div>
+        <div>
+            <h2>Working With Raw Pixel Data</h2>
+            <p>
+                If we were to just read the data that is in the IDAT chunk, perform our steganography and create the output file, we could run into a few problems. 
+                The most obvious would be, possible loss of the data which was hidden, due to different compression outputs from different programs, which would 
+                be extremely annoying. The image could also be shown as corrupted by image viewing software, due to incorrect CRCs. Even if we dealt with the CRC, 
+                the image could possibly look distorted due to editing bytes we should not be editing. Thus, before we start doing any work hiding the data, we 
+                must first be able to access the raw pixel data. Getting to this raw pixel data involves dealing with a few processes. These processes are 
+                compression/decompression, filtering/reconstruction and sometimes interlacing, though we will not discuss interlacing as it is not supported, and  
+                is not really something many PNGs use, according to ChatGPT anyways.
+            </p>
+        </div>
+        <div>
+            <h2>Compression / Decompression</h2>
+            <p>
+                PNGs use a lossless compression algorithm known as DEFLATE. DEFLATE is a lossless compression algorithm which uses LZ777 and Huffman encoding. 
+                DEFLATE being a lossless compression algorithm is perfect for LSB steganography as every pixel value is preserved, which makes LSB 
+                modifications persist when the image is saved and reopened. As I realised writing my own implementation of this would take far too long, I used 
+                zlib to help me. Using zlib sped things up a lot, however, at some point during the development of the compression and decompression functionality, I had managed to convince myself that 
+                the output of the compression I was performing was supposed to be identical to the compressed data in the original image's IDAT chunk. I spent way too 
+                many hours trying to get this non-existent issue fixed, and only after comparing the raw pixel data of the original image to that of the output image 
+                (without any data hidden of course) did I finally remember that the result of the compression did infact not matter, as DEFLATE is lossless, meaning the raw 
+                pixel data is always going to be the same, regardless of how the compressed data looked &#x1F926;&#x200D;&#x2642;. And so, I finally moved on to the next step. 
+            </p>
+        </div>
+        <div>
+            <h2>Filtering / Reconstruction</h2>
+            <p>
+                Filtering is a process which makes the image data compress more efficiently, thus needs to be removed after inflating the image. Thus, 
+                after decompression comes reconstruction (reconstructing the original raw data from the filtered data). The filter algorithms were fairly 
+                easy to understand, so I decided to write them myself. However, while writing them it took me quite a while to realise that the 
+                filtering / reconstruction of a byte was based on the corresponding byte in the previous pixel, even though the documentation I followed 
+                clearly stated that I need to work with current byte - BPP (bytes per pixel), &#x1F926;&#x200D;&#x2642; x 2. <br> <br> After an image has successfully been unfiltered, 
+                we can finally work with the raw pixel data.
+            </p>
+        </div>
+        <div>
+            <h2>Least Significant Bit Steganography</h2>
+            <p>
+                LSB steganography, as the name suggests, involves working with the bit/s in the data we wish to hide as well as those that make up a PNG image. 
+                We use the least significant bits as they have the least effect on the value of the byte, which is important because we want the image to look 
+                almost identical to the original so that it is not immediately obvious that the image has been altered &#x1F50D;. For this program I chose to work with 
+                the 2 least significant bits of each byte. In my approach I have also decided to include the length of hidden data in the output image before the 
+                actual data, so that the program knows exactly how much of the pixel data to read.
+            </p>
+        </div>
+        <div>
+            <h2>Hiding The Data</h2>
+            <p>
+                The process of hiding the data works by first extracting each pair of bits (there are 8 bits in a byte, so 4 pairs of bits) in each byte of 
+                data we wish to hide.
+            </p>
+            <pre><code>
+byte getNthBitPair(byte value, uint8_t n)
+{
+    byte bitmask = 3 << (n * 2);
+    byte temp = value & bitmask;
+    byte ret = temp >> (n * 2);
+
+    return ret;
+}
+            </code></pre>
+            <p>
+                The above function is responsible for extracting bit pairs. It takes two arguments; The first one is the byte we wish to extract bit pairs from (value) and 
+                the second, which bit pair to extract (n, a number from 0 - 3). The first line of the function creates a bitmask by taking the value 3 and shifting its bits
+                to the left n x 2 times (e.g. n = 0 -> bitmask = 00000011 (3 in binary), n = 1 -> bitmask = 00001100). We then perform a bitwise and operation using the value
+                and the bitmask which gets us the values at the two bits we want. This temporary value is then shifted the opposite way the same amount of times in order to 
+                make those bits the least significant bits of the returned value. 
+                <br> <br>
+                The next step is to set the least significant bits of the byte in image data, which we retrieved from the IDAT chunk. The function below is responsible for 
+                performing this task.
+            </p>
+            <pre><code>
+byte setLeastSignificantBits(byte value, byte new_value)
+{
+    byte output = value;
+    output &= ~3;
+    output |= new_value; 
+
+    return output;
+}
+            </code></pre>
+            <p>
+                The function takes two arguments; the first one is the value we wish to set the least significant bits of (value) and the second, the pair of bits we have extracted (new_value)
+                (yes, I am aware the that the name "new_value" may be a little bit misleading). The first line of the function sets the return value to the value of the byte we want to set the
+                least significant bits of. We then clear the least significant bits of this output value by performing a bitwise & with not 3 (~3), in binary this is (11111100). Finally we perform
+                a bitwise or to set the lsbs of the output value.
+                <br> <br>
+                As for including the length of the data, I simply type casted the uint32_t (32 bit unsigned integer) holding the length to a byte* (byte pointer) and performed the same operations 
+                above.
+                <br> <br> 
+                After having hidden our data, we apply the filter algorithms to the edited raw pixel data, compress this filtered data and finally recalculate the CRC for the chunk, before 
+                finally writing the chunk out to the output PNG file.
+            </p>
+        </div>
+        <div>
+            <h2>Extracting The Data</h2>
+            <p>
+                Extracting the data is a slightly different process to hiding the data. First we need some where to store the data. We first extract the length with the following <em>super readable</em> code below. 
+                The code essesntially retrieves the 2 lsbs from each byte of the image data for the first 16 bytes (uint32_t is 4 bytes long, each byte has 4 bit pairs), and bit shifts them into 
+                the correct place.  
+            </p>
+            <pre><code>
+uint32_t length = 0; 
+
+for (int byte = 0; byte < sizeof(uint32_t); ++byte)
+{
+    for (int i = 0; i < BITS_IN_BYTE / 2; ++i)
+    {
+        length |= (uint32_t)getNthBitPair(
+            data->data[byte * sizeof(uint32_t) + i + 1], 0) 
+            << (byte * sizeof(uint32_t) + i) * 2;
+    }
+}
+            </code></pre>
+            <p>
+                Next comes extracting the actual data.
+            </p>
+            <pre><code>
+char* data = malloc(sizeof(char) * (length + 1));
+memset(message, 0, length + 1);
+            </code></pre>
+            <p>
+                This code creates a buffer where we will extract our data into. The +1 after length is added for the null terminating byte of C strings. We set each
+                byte in data to 0, so that they are effectively a blank slate for us to perform any following operations. Our next step 
+                is to iterate through the the raw pixel data of the image and extract the 2 least significant bits from each byte. &#x1F447;
+            </p>
+            <pre><code>
+getNthBitPair(byte, 0);
+            </code></pre>
+            <p>
+                We then shift these bits to their correct position withing the corresponding byte in the message buffer and or them with that value to set the bits in that byte.
+                <pre><code>
+for (int byte = 0; byte < length; ++byte)
+{
+    for (int i = 0; i < BITS_IN_BYTE / 2; ++i)
+    {
+        message[byte] |= getNthBitPair(
+            data->data[byte * length + i + 17], 0) << i * 2;
+    } 
+}
+                </code></pre>
+                <br> <br>
+                There we have it! Some simple LSB Steganography.
+            </p>
+        </div>
+        <div>
+            <h2>What's Next</h2>
+            <p>
+                Currently the program only works on PNG files with a single IDAT chunk, thus the next logical step would be to add support for multiple IDAT chunks. 
+                The program also does not support certain PNG pixel formats such as Indexed and visual changes in the image will be more noticeable in images that 
+                use Grayscale/Grayscale with Alpha. A fix for Indexed pixel format may be to hide the data in the PLTE chunk instead. I do not currently have any 
+                idea how to handle Grayscale images.
+            </p>
+        </div>
+        <div>
+            <h2>Final Thoughts</h2>
+            <p>
+                This project was an amazing learning experience. It deepened my knowledge of the PNG file format as well as solidifying my understanding in working 
+                with individual bits. One of the biggest challenges for me was figuring out how the PNG's filtering techniques worked. Beyond the technical 
+                challenges, this project made me appreciate how much information can be subtly embedded into images. While LSB steganography is simple and effective, 
+                it does have its downsides. This does make me curious to try out other forms of steganography (JPEG steganography).
             </p>
         </div>
     </div>

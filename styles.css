@@ -74,3 +74,12 @@ code {
     font-size: inherit;
     font-family: inherit;
 }
+
+table, th, td {
+    border: 1px solid white;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 10px;
+}
