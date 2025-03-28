@@ -19,11 +19,6 @@
             <span>&#x2190;</span>
             <a href="blog.html">Back to Blogs</a>
         </div>
-        <!-- <div>
-            <p>
-                Work in progress! Content coming soon.
-            </p>
-        </div> -->
         <div>
             <p>
                 While doom scrolling YouTube shorts, in bed at 12 am, I came across a video in which a YouTuber was discussing their method of password storage. They
@@ -65,10 +60,6 @@
                     <td>4 bytes</td>
                 </tr>
             </table>
-                <!-- length -> 4 bytes, the length of the chunk data. <br> <br>
-                chunk type -> 4 bytes, <br> <br>
-                chunk data -> length bytes, <br> <br>
-                CRC -> 4 bytes, a checksum calculated over the chunk type and chunk data. <br> <br> -->
             <p>
                 There are a few critical chunks which applications must be able to understand to properly read and render a PNG. These chunks are the IHDR, PLTE, IDAT, 
                 and IEND chunks. The IHDR chunk is always the first chunk and stores important information about the PNG such as dimensions, bit depth, colour type 
@@ -223,7 +214,7 @@ byte setLeastSignificantBits(byte value, byte new_value)
         <div>
             <h2>Extracting The Data</h2>
             <p>
-                Extracting the data is a slightly different process to hiding the data. First we need some where to store the data. We first extract the length with the following <em>super readable</em> code below. 
+                Extracting the data is a slightly different process to hiding the data. We first extract the length with the following <em>super readable</em> code below. 
                 The code essesntially retrieves the 2 lsbs from each byte of the image data for the first 16 bytes (uint32_t is 4 bytes long, each byte has 4 bit pairs), and bit shifts them into 
                 the correct place.  
             </p>
@@ -245,10 +236,10 @@ for (int byte = 0; byte < sizeof(uint32_t); ++byte)
             </p>
             <pre><code>
 char* data = malloc(sizeof(char) * (length + 1));
-memset(message, 0, length + 1);
+memset(data, 0, length + 1);
             </code></pre>
             <p>
-                This code creates a buffer where we will extract our data into. The +1 after length is added for the null terminating byte of C strings. We set each
+                We now need somewhere to store the data being extracted. The above code creates a buffer where we will extract our data into. The +1 after length is added for the null terminating byte of C strings. We set each
                 byte in data to 0, so that they are effectively a blank slate for us to perform any following operations. Our next step 
                 is to iterate through the the raw pixel data of the image and extract the 2 least significant bits from each byte. &#x1F447;
             </p>
@@ -256,7 +247,7 @@ memset(message, 0, length + 1);
 getNthBitPair(byte, 0);
             </code></pre>
             <p>
-                We then shift these bits to their correct position withing the corresponding byte in the message buffer and or them with that value to set the bits in that byte.
+                We then shift these bits to their correct position within the corresponding byte in the message buffer and or them with that value to set the bits in that byte.
                 <pre><code>
 for (int byte = 0; byte < length; ++byte)
 {
