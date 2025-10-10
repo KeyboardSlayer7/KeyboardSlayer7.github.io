@@ -4,12 +4,79 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KeyboardSlayer7</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Hello World!</h1>
-    <p>
-        Sorry, this website it undergoing some changes.<br> 
-        It will hopefully be back up soon.<br>
-    </p>
+    <div class="container">
+        <h1>Hello World!</h1>
+        <section>
+            <h2>Who Am I?</h2>
+            <p>
+                Hello, I am Dhruv Sharma, a 3rd year university student studying 
+                Computer Science at the Royal Melbourne Institute of Technology 
+                (RMIT) in Melbourne, Australia. I love everything to do with 
+                technology, however my main interests are video games, programming 
+                and cybersecurity related topics.
+            </p>
+            <ul>
+                <li><a href="https://github.com/KeyboardSlayer7">GitHub</a></li>
+                <li><a href="https://www.linkedin.com/in/dhruv-sharma-bb7328217">LinkedIn</a></li>
+            </ul>
+        </section>
+        <section>
+            <h2>Projects</h2>
+            <section>
+                <h3><a href="https://github.com/KeyboardSlayer7/password_manager">Password Manager</a></h3>
+                <p>
+                    A simple master-password based password manager that stores encrypted 
+                    passwords in a JSON file. The program uses the AES encryption algorithm 
+                    to encrypt and decrypt passwords. The program is written in C++ and uses 
+                    the OpenSSL library for encryption/decryption and nlohmann/json for 
+                    handling JSON files.
+                </p>
+            </section>
+            <section>
+                <h3><a href="https://github.com/KeyboardSlayer7/steganography">PNG Steganography</a></h3>
+                <p>
+                    A simple program written in C, with the help of zlib, that hides text in 
+                    a PNG image. The program uses the Least Significant Bit (LSB) technique to 
+                    hide content in the image's pixel data.
+                </p>
+            </section>
+            <section>
+                <h3><a href="https://github.com/KeyboardSlayer7/http_server">HTTP/1.1 Server</a></h3>
+                <p>
+                    A simple HTTP/1.1 server written in C++ that serves static files. The server 
+                    supports GET requests and can server HTML and PNG image file types (AFAIK) in 
+                    its current state.
+                </p>
+            </section>
+            <section>
+                <h3><a href="https://github.com/KeyboardSlayer7/block">DNS Proxy</a></h3>
+                <p>
+                    A simple DNS proxy server written in C++ that either blocks or forwards requests 
+                    to a specified DNS server. The proxy parses requests from clients and checks the 
+                    domain name against a blacklist. If a domain name is in the blacklist the query 
+                    is modified before it is sent to the selected DNS server.
+                </p>
+            </section>
+            <section>
+                <h3><a href="https://github.com/KeyboardSlayer7/setup">CMake Project Generator</a></h3>
+                <p>
+                    A simple C++ terminal program that generates a CMake project structure for C++ 
+                    projects. The script creates a CMakeLists.txt file and a src directory for source 
+                    files. The program uses C++17's std::filesystem and nlohmann/json.
+                </p>
+            </section>
+        </section>
+        <section>
+            <h2>Contact</h2>
+            <p>
+                Feel free to reach out by email if you have any questions or feedback. 
+                <br> <br>
+                <strong>Email: keyboardslayer7@protonmail.com</strong>
+            </p>
+        </section>
+    </div>
 </body>
 </html>
