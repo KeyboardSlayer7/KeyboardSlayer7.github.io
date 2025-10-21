@@ -7,3 +7,21 @@ body {
 .container {
     max-width: 512px;
 }
+
+img {
+    max-width: 100%;
+}
+
+pre {
+    white-space: pre-wrap;
+    background-color: #ededed;
+    border-radius: 5px;
+    padding: 16px;
+}
+
+table, tr, td {
+    border-style: solid;
+    border-collapse: collapse;
+    border-width: 1px;
+    padding: 8px;
+}
