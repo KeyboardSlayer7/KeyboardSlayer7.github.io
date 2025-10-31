@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Steganography</title>
+	<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+	<div class="container">
+		<h1>Steganography</h1>
+		<a href="https://github.com/KeyboardSlayer7/hidethedata" target="_blank" rel="noopener noreferrer">
+			Link to the full code on GitHub.
+		</a>
+		<h2>What is it?</h2>
+		<p>
+			Steganography refers to the practice of hiding information such as
+			text in other forms of data, in an attempt to avoid detection. In
+			our case, strings of text are being hidden within PNG images using
+			a technique known as Least Significant Bit (LSB) steganography.
+		</p>
+		<h2>Why?</h2>
+		<h3> Information Hiding Techniques</h3>
+		<p>
+			Unlike other information hiding techniques such as encryption, where
+			it is known that some data does indeed exist, steganography attempts
+			to hide the existence of the data making it a more discreet method
+			of information hiding.
+		</p>
+		<h3> Portable Network Graphics (PNG)</h3>
+		<p>
+			The PNG file format was chosen for two main reasons. Most importantly,
+			PNG’s use a lossless compression algorithm, meaning all pixel data
+			is preserved and our hidden data has less chance of getting lost
+			or completely discarded. The other reason is that the file format
+			is quite straight-forward and intuitive.
+		</p>
+		<h3> Least Significant Bit (LSB) Steganography</h3>
+		<p>
+			LSB steganography is a simple technique that achieves information
+			hiding by modifying the least significant bits of each byte in the
+			image’s pixel data. The least significant bits are the bits that
+			result in the smallest change in an integer's total value if flipped.
+			This results in information hiding, without noticeable visual differences
+			between the original and modified images.
+		</p>
+		<h2>How</h2>
+		<p>
+			Here we will go through the processes I used to extract the raw
+			pixel data, modify the pixel data to hide a string of text, and finally,
+			retrieve the string from the modified image.
+		</p>
+		<h3>Parsing</h3>
+		<p>
+			PNG files store information in chunks. Each chunk is laid out as
+			shown in the image below. Each chunk has a length, chunk type, chunk
+			data which is length bytes long and a Cyclical Redundancy Check (CRC)
+			value used to verify the integrity of the chunk data.
+		</p>
+		<table>
+			<tr>
+				<td>Length<br>(4 bytes)</td>
+				<td>Type<br>(4 bytes)</td>
+				<td>Data<br>(Length bytes)</td>
+				<td>CRC<br>(4 bytes)</td>
+			</tr>
+		</table>
+		<p>
+			We parse the file chunk by chunk, looking for the IHDR and IDAT chunks.
+			The IHDR chunk is required as it stores a few key pieces of information,
+			the width, height, bit depth (bits per sample) and color type of
+			the image. The bit depth and color type are used to calculate the
+			bytes per pixel (bpp). The IDAT chunk holds the raw pixel data we
+			wish to modify.
+		</p>
+		<p>
+			The parsing is done by simply reading 4 bytes for the length, 4 bytes
+			for the chunk type, length bytes for the chunk data and finally 4
+			bytes for the CRC value. This is done until we hit the IEND chunk,
+			which is always the last chunk in a PNG file and signifies the end
+			of the file.
+			
+		</p>
+		<h3>Compression/Decompression</h3>
+		<p>
+			Once the IDAT chunk has been located, it must be decompressed. Instead
+			of implementing these algorithms from scratch, I let zlib handle
+			compression/decompression for me, thus I will not go into much detail
+			about it. 
+		</p>
+		<p>
+			Decompression is done using the <code>z_stream</code> structure with the functions
+			<code>inflateInit()</code>, <code>inflate()</code> and <code>inflateEnd()</code>. We calculate the size
+			of the required output buffer using the information found in the
+			IHDR chunk, and allocate a buffer to hold the decompressed data and
+			pass its information to the <code>z_stream</code> structure. Then for each IDAT
+			chunk we update the <code>z_stream</code> structure telling it where the chunk
+			data is and how much of it is available in bytes and let zlib handle
+			the rest.
+		</p>
+		<p>
+			Compression is performed using a <code>z_stream</code> structure using the function
+			<code>deflateInit()</code>, <code>deflate()</code> and <code>deflateEnd()</code>. We provide zlib with the
+			filtered pixel data via the <code>z_stream</code>, and allocate a buffer for the
+			compressed output. The <code>deflate()</code> function is then called until there
+			is no more data to be processed.
+		</p>
+		<p>
+			If you are interested in the detailed workings of zlib’s compression
+			and decompression functions, the official <a href="https://www.zlib.net/manual.html">zlib Manual</a> provides
+			clear explanations. Check out the <a href="https://www.zlib.net/zlib_how.html">zlib Usage Example</a> for guidance
+			on how these functions are used.     
+		</p>
+		<h3>Filtering</h3>
+		<p>
+			After decompression, the filtering applied to the pixel data must
+			be reversed. Filtering is a process applied to the image data before
+			compression to help the DEFLATE algorithm better compress the data.
+			The filtering must be reversed in order to extract the actual pixel
+			data. Each scanline in the image may use a different filter type.
+			The first byte of every scanline of pixel data is reserved for the
+			filter type used on that scanline. The filter types are: None, Sub,
+			Up, Average and Paeth. 
+		</p>
+		<p>
+			The relevant bytes required for filtering are shown below. Byte x
+			represents the current byte, a is the corresponding byte in the previous
+			pixel, b is the byte at the same index as x in the previous scanline
+			and finally c is the corresponding byte in the previous pixel in
+			the previous scanline.
+		</p>
+		<pre>
+<!-- 	 -->+---+---+
+<!-- 	 -->| c | b |
+<!-- 	 -->+---+---+
+<!-- 	 -->| a | x |
+<!-- 	 -->+---+---+
+<!-- --></pre>
+		<p>
+			<ul>
+				<li>
+					<strong>x:</strong> current byte.
+				</li>
+				<li>
+					<strong>a:</strong> corresponding byte in previous pixel. (x - bpp)
+				</li>
+				<li>
+					<strong>b:</strong> byte at the same index as x, in the scanline above.<br>(x - scanline_length)
+				</li>
+				<li>
+					<strong>c:</strong> corresponding byte in the pixel previous to b.<br>(x - scanline_length
+					- bpp)
+				</li>
+			</ul>
+		</p>
+		<p>
+			Before we dive into each of the filter types, there are a few important
+			details to keep in mind for filtering and reversing the filtering. 
+		</p>
+		<p>
+			Filtering is done using the raw value of the current byte, and the
+			raw values of previous bytes. Reversing the filter uses the raw value of previous
+			bytes to calculate the raw value of the current byte from the filtered
+			value of the current byte.
+		</p>
+		<p>
+			Operations are computed mod 256, to ensure values stay within the
+			range of a single byte.
+		</p>
+		<h4>Filter Types </h4>
+		<h5>None</h5>
+		<p>
+			No changes are made to the pixel data.
+		</p>
+		<h5>Sub</h5>
+		<p>
+			Each byte (x) is replaced by the difference between itself and the
+			corresponding byte in previous pixel (a).
+		</p>
+		<p>
+			Filtering: filtered(x) = original(x) - original(a)
+		</p>
+		<p>
+			Reversing Filter: original(x) = filtered(x) + original(a)
+		</p>
+		<h5>Up</h5>
+		<p>
+			Each byte (x) is replaced by the difference between itself and the
+			byte at the same index in the scanline above (b).
+		</p>
+		<p>
+			Filtering: filtered(x) = original(x) - original(b)
+		</p>
+		<p>
+			Reversing Filter: original(x) = filtered(x) + original(b)
+		</p>
+		<h5>Average</h5>
+		<p>
+			Each byte (x) is replaced by the difference between itself and the
+			average of the corresponding byte in the previous pixel (a) and the
+			byte at the same index in the scanline above (b).
+		</p>
+		<p>
+			Filtering: filtered(x) = original(x) - ((original(a) + original(b))
+			/ 2)
+		</p>
+		<p>
+			Reversing Filter: original(x) = filtered(x) + ((original(a) + original(b))
+			/ 2)  
+		</p>
+		<h5>Paeth</h5>
+		<p>
+			Each byte (x) is replaced by the difference between itself and the
+			neighbouring pixel with the closest value to a computed value.
+		</p>
+		<p>
+			Filtering: filtered(x) = original(x) - paethPredictor(original(a),
+			original(b), original(c))
+		</p>
+		<p>
+			Removing Filter: original(x) = filtered(x) + paethPredictor(original(a),
+			original(b), original(c))
+		</p>
+		<figure>
+			<img src="../assets/paeth.png" alt="Could not find image!">
+			<figcaption>paethPredictor function</figcaption>
+		</figure>
+		<h3>Hiding The Data</h3>
+		<p>
+			Once the pixel data has been extracted, the text can be hidden in
+			the image. To allow for a little bit more data to be hidden, I have
+			decided to modify the 2 least significant bits of each byte, rather
+			than just the least significant bit. The process is best explained
+			with an example.
+		</p>
+		<p>
+			The current byte in the text string is ‘A’, represented as 01000001
+			in binary. As a byte is 8 bits long and we are modifying the 2 least
+			significant bits of each byte in the images pixel data, the bits
+			representing ‘A’ must be stored in 4 separate bytes. For this
+			example we will randomly generate 4 bytes with decimal values 75,
+			213, 176 and 242, represented in binary as 01001011, 11010101, 10110000
+			and 11110010 respectively.
+		</p>
+		<pre>
+<!-- 	-->'A' = 01000001
+
+<!-- 	-->+----------+----------+----------+----------+
+<!-- 	-->| 75       | 213      | 176      | 242      |
+<!-- 	-->+----------+----------+----------+----------+
+<!-- 	-->| 01001011 | 11010101 | 10110000 | 11110010 |
+<!-- 	-->+----------+----------+----------+----------+
+<!-- --></pre>
+		<p>
+			Each pair of bits in ‘A’ can be retrieved by performing the following
+			steps. First create a bitmask with decimal value 3, 00000011 in binary.
+			Next, perform a left bit shift 2n times, where n ∈ {0, 1, 2, 3},
+			resulting in bitmasks 00000011 (original), 00001100, 00110000 and
+			11000000. 
+		</p>
+		<pre>
+<!-- 	-->3 = 00000011 (bitmask)
+
+<!-- 	-->3 << 2n, n &#x2208; {0, 1, 2, 3}
+
+<!-- 	-->3 << 0 = 00000011 (2 x 0, n = 0)
+<!-- 	-->3 << 2 = 00001100 (2 x 1, n = 1)
+<!-- 	-->3 << 4 = 00110000 (2 x 2, n = 2)
+<!-- 	-->3 << 6 = 11000000 (2 x 3, n = 3)
+<!-- --></pre>
+		<p>
+			Then perform a bitwise AND operation between the binary value of
+			‘A’ and the bitmask. For this example the two most significant
+			bits (4th bit pair) of ‘A’ will be extracted and will be stored
+			in the 4th element in “pixel data”.
+		</p>
+		<p>
+			The rest of the example will only go through the process for a single 
+			pair of bits. The process is mostly the same for all pairs of bits, 
+			the only change being how much the relevant bits are shifted. 
+		</p>
+		<pre>
+<!-- 	-->    01000001 ('A')
+<!-- 	-->AND 11000000 (3 << 6)
+<!-- 	-->------------
+<!-- 	-->    01000000 (result)
+<!-- --></pre>
+		<p>
+			Finally, perform a right bit shift 2n times, to set the retrieved
+			bits as the two least significant bits of the result.
+		</p>
+		<pre>
+<!-- 	 -->01000000 (result) >> 6 = 00000001
+<!-- --></pre>
+		<p>
+			To modify the least significant bits of a byte in the pixel data,
+			the 2 least significant bits in the byte are first cleared by performing a bitwise AND operation
+			with the value ~3 (not 3), represented as 11111100 in binary. 
+		</p>
+		<pre>
+<!-- 	-->NOT 00000011 (3)
+<!-- 	-->------------
+<!-- 	-->    11111100 (~3)
+<!-- --></pre>
+		<pre>
+<!-- 	-->    11110010 (242)
+<!-- 	-->AND 11111100 (~3)
+<!-- 	-->------------
+<!-- 	-->    11110000 (242 with lsbs cleared)
+<!-- --></pre>
+		<p>
+			Lastly perform a bitwise OR between the extracted bits and the pixel
+			data byte with cleared least significant bits.
+		</p>
+		<pre>
+<!-- 	-->    11110000 (242 with lsbs cleared)
+<!-- 	-->OR  00000001 (result)
+<!-- 	-->------------
+<!-- 	-->    11110001 (new byte value in place of 242)
+<!-- --></pre>
+		<p>
+			Once all the data has been hidden, the modified image data must be
+			filtered and then compressed. The modifications to the chunk’s
+			data result in an incorrect CRC for the new IDAT chunk, thus the
+			CRC must be recomputed, over the chunk type and the chunk data. Once
+			again zlib comes in handy with a function to compute the CRC.
+		</p>
+		<h3>Retrieving Hidden Data</h3>
+		<p>
+			During the hiding stage, a 4 byte integer which is the length of
+			the text string is also embedded into the image’s pixel data before
+			the actual text string, to make retrieval easier so that the program
+			knows how much data it needs to read. 
+		</p>
+		<p>
+			The extraction method explained below is also used to get the length. 
+			This is done by treating the 4 bytes used to store an integer as an array 
+			of bytes as is the case with a normal string.  	
+		</p>
+		<p>
+			In order to reconstruct ‘A’ from the modified image pixel data
+			bytes, we extract the two least significant bits from each of the
+			pixel data bytes. 
+		</p>
+		<pre>
+<!-- 	 -->bitmask = 00000011 (3)
+<!-- --></pre>
+		<pre>
+<!-- 	 -->    11110001 (new byte value in place of 242)
+<!-- 	 -->AND 00000011 (3)
+<!-- 	 -->------------
+<!-- 	 -->    00000001 (result)
+<!-- --></pre>
+		<p>
+			When a set of bits is extracted, they are left shifted 2n times where
+			n ∈ {0, 1, 2, 3}
+		</p>
+		<pre>
+<!-- 	 -->00000001 (result) << 6 (2 x 3) = 01000000
+<!-- --></pre>
+		<p>
+			Then a bitwise OR operation is performed between the byte in the
+			output string and the extracted bits. 
+		</p>
+		<pre>
+<!-- 	 -->    00000001 (reconstructed value of 'A' so far)
+<!-- 	 -->OR  01000000 (result << 6)
+<!-- 	 -->------------
+<!-- 	 -->    01000001 ('A')
+		</pre>
+		<p>
+			The reconstructed value of 'A' seen above is the result of having extracted 
+			each pair of bits from the previous pixel data bytes, and performing the steps 
+			just as we did for the example.
+		</p>
+		<p>
+			We have now covered the main steps to hide and extract a string of data inside 
+			a PNG image. We explored how the image data is stored, compression and filtering 
+			used to prepare the image data for modification and restore the image and most 
+			importantly how to quietly change pixels to hide information. This process however 
+			is not flawless. We will discuss some of the limitations and some possible fixes in 
+			the next section.
+		</p>
+		<h2>What’s next</h2>
+		<p>
+			In the program’s current state, there are certain combinations
+			of bit depth and color type that either do not work or will result
+			in extremely noticeable changes in the image’s visuals with LSB
+			steganography. This includes the Indexed color type and bit depths
+			less than 8. Thus checking that pixels are represented by at least
+			1 byte and the color type is not Indexed are valuable additions to
+			stop processing of the image before any issues occur. There is however
+			the option to hide the data within the PLTE (palette) chunk for the
+			Indexed color type instead of in the IDAT chunk, which may be a valuable
+			improvement to the project. The program also does not support PNG
+			images with interlacing. This will most likely not change as from
+			what is written online, PNG interlacing is not extremely common as
+			it hurts compression.
+		</p>
+		<h2>Final Thoughts</h2>
+		<p>
+			This project was an amazing learning experience. It deepened my knowledge
+			of the PNG file format as well as solidifying my understanding in
+			working with individual bits. One of the biggest challenges for me
+			was figuring out how the PNG's filtering techniques worked. Beyond
+			the technical challenges, this project made me appreciate how much
+			information can be subtly embedded into images. While LSB steganography
+			is simple and effective, it does have its downsides. This does make
+			me curious to try out other forms of steganography (JPEG steganography).
+		</p>
+		<p>
+			If you have any questions, notice something that is wrong or could be improved, 
+			or just want to share your thoughts, feel free to contact me. Your feedback will 
+			help make this post better!
+		</p>
+	</div>
+</body>
+</html>
