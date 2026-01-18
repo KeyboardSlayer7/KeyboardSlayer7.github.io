@@ -1,6 +1,7 @@
 body {
     background-color: #121212;
     color: white;
+    font-family: "Exo 2";
 
     display: flex;
     flex-direction: column;
