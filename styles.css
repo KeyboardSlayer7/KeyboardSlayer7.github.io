@@ -1,7 +1,7 @@
 body {
-    background-color: #121212;
-    color: white;
-    font-family: "Exo 2";
+    background-color: white;
+    color: black;
+    font-family: "Libertinus Mono";
 
     display: flex;
     flex-direction: column;
@@ -12,7 +12,7 @@ body {
 .container {
     outline-style: solid;
     outline-width: 1px;
-    outline-color: #373737;
+    outline-color: black;
 
     max-width: 512px;
     padding: 32px;
@@ -25,10 +25,10 @@ img {
 pre {
     outline-style: solid;
     outline-width: 1px;
-    outline-color: #373737;
+    outline-color: black;
 
     white-space: pre-wrap;
-    background-color: #1E1E1E;
+    background-color: #D3D3D3;
     border-radius: 5px;
     padding: 16px;
 }
@@ -41,5 +41,9 @@ table, tr, td {
 }
 
 a {
-    color: white;
+    color: black;
+}
+
+a:hover {
+    color: #737373;
 }
