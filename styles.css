@@ -9,13 +9,19 @@ body {
     margin: 0px;
 }
 
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
 .container {
     outline-style: solid;
     outline-width: 1px;
     outline-color: black;
 
-    width: 100%;
     max-width: 512px;
+    width: 100%;
     min-height: 100vh;
     min-height: 100dvh;
     padding: 32px;
